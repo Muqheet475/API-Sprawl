@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AASDS — AI-Assisted API Security</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z" fill="var(--accent)" opacity="0.9"/>
+        <path d="M9 12l2 2 4-4" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">AASDS</span>
+      <span class="brand-sub">Security Monitor</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-label">NAVIGATION</div>
+    <a class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span>Dashboard</span>
+    </a>
+    <a class="nav-item" data-page="inventory" onclick="navigate('inventory')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+      </svg>
+      <span>API Inventory</span>
+    </a>
+    <a class="nav-item" data-page="alerts" onclick="navigate('alerts')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span>Alerts</span>
+    </a>
+    <a class="nav-item" data-page="ai" onclick="navigate('ai')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M12 2a4 4 0 0 1 4 4v2h2a4 4 0 1 1 0 8h-2v2a4 4 0 1 1-8 0v-2H6a4 4 0 1 1 0-8h2V6a4 4 0 0 1 4-4z"/>
+      </svg>
+      <span>AI Analysis</span>
+    </a>
+    <a class="nav-item" data-page="settings" onclick="navigate('settings')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <span>Settings</span>
+    </a>
+    
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="system-status">
+      <span class="status-dot pulse"></span>
+      <span class="status-text">AI Engine Active</span>
+    </div>
+    <div class="sidebar-version">v1.0.0</div>
+  </div>
+</aside>
+
+<!-- MAIN WRAPPER -->
+<div class="main-wrapper">
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="breadcrumb">
+        <span class="breadcrumb-root">AASDS</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-page" id="breadcrumb-label">Dashboard</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="connection-status" id="ws-status">
+        <span class="status-dot" id="ws-dot"></span>
+        <span id="ws-text">Connecting...</span>
+      </div>
+      <div class="avatar">AD</div>
+    </div>
+  </header>
+
+  <!-- CONTENT AREA -->
+  <main class="content" id="content">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Overview</h1>
+          <p class="page-subtitle">Real-time API threat landscape</p>
+        </div>
+        <div class="time-pills">
+          <button class="pill active" onclick="setRange('24H', this)">24H</button>
+          <button class="pill" onclick="setRange('7D', this)">7D</button>
+          <button class="pill" onclick="setRange('30D', this)">30D</button>
+        </div>
+      </div>
+
+      <!-- SUMMARY CARDS -->
+      <div class="cards-grid">
+        <div class="card card--primary">
+          <div class="card-icon" style="--icon-color: #38bdf8;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <span class="card-label">Total APIs</span>
+            <span class="card-value" data-count="247">0</span>
+            
+          </div>
+          <div class="card-sparkline" id="spark-total"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-icon" style="--icon-color: #a78bfa;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <span class="card-label">Shadow APIs</span>
+            <span class="card-value" data-count="34">0</span>
+          </div>
+          <div class="card-sparkline" id="spark-shadow"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-icon" style="--icon-color: #f87171;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <span class="card-label">High Risk APIs</span>
+            <span class="card-value" data-count="18">0</span>
+          </div>
+          <div class="card-sparkline" id="spark-high"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-icon" style="--icon-color: #fb923c;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <span class="card-label">Active Alerts</span>
+            <span class="card-value" data-count="12">0</span>
+          </div>
+          <div class="card-sparkline" id="spark-alerts"></div>
+        </div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="charts-row">
+        <div class="chart-panel chart-panel--wide">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">API Traffic Volume</h3>
+              <p class="panel-sub">Requests per hour</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="trafficChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-panel chart-panel--narrow">
+          <div class="panel-header">
+            <h3 class="panel-title">Discovery Distribution</h3>
+            <p class="panel-sub">Registered vs. Shadow APIs</p>
+          </div>
+          <div class="chart-container chart-container--donut">
+            <canvas id="riskChart"></canvas>
+          </div>
+          <div class="donut-legend">
+            <div class="donut-legend-item">
+              <span class="legend-dot" style="background:#34d399"></span>
+              <span>Registered</span>
+              <strong id="risk-low-count">0</strong>
+            </div>
+            <div class="donut-legend-item">
+              <span class="legend-dot" style="background:#f87171"></span>
+              <span>Shadow</span>
+              <strong id="risk-high-count">0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ALERTS TABLE -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">Recent Alerts</h3>
+            <p class="panel-sub">Latest security events requiring attention</p>
+          </div>
+          <button class="btn-outline" onclick="navigate('alerts')">View All →</button>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table" id="dashboard-alerts-table">
+            <thead>
+              <tr>
+                <th>TIME</th>
+                <th>API ENDPOINT</th>
+                <th>SEVERITY</th>
+                <th>DESCRIPTION</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== API INVENTORY PAGE ===== -->
+    <section class="page" id="page-inventory">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">API Inventory</h1>
+          <p class="page-subtitle">All discovered endpoints — registered and shadow</p>
+        </div>
+        <div class="header-actions">
+          <div class="search-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" placeholder="Search endpoints..." id="inventory-search" oninput="filterInventory()">
+          </div>
+          <select class="filter-select" id="inventory-filter" onchange="filterInventory()">
+            <option value="all">All Types</option>
+            <option value="Registered">Registered</option>
+            <option value="Shadow">Shadow</option>
+          </select>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="table-wrapper">
+          <table class="data-table" id="inventory-table">
+            <thead>
+              <tr>
+                <th>API ENDPOINT</th>
+                <th>TYPE</th>
+                <th>METHOD</th>
+                <th>RISK STATUS</th>
+                <th>LAST SEEN</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ALERTS PAGE ===== -->
+    <section class="page" id="page-alerts">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Security Alerts</h1>
+          <p class="page-subtitle">All detected threats and anomalies</p>
+        </div>
+        <div class="header-actions">
+          <select class="filter-select" id="alerts-filter" onchange="filterAlerts()">
+            <option value="all">All Severity</option>
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="table-wrapper">
+          <table class="data-table" id="alerts-table">
+            <thead>
+              <tr>
+                <th>TIME</th>
+                <th>API ENDPOINT</th>
+                <th>SEVERITY</th>
+                <th>DESCRIPTION</th>
+                <th>AI VERDICT</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- ===== AI ANALYSIS PAGE ===== -->
+    <section class="page" id="page-ai">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">AI Analysis</h1>
+          <p class="page-subtitle">Advanced threat insights and model evaluation</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Recent AI Decisions</h3>
+          <p class="panel-sub">Model outputs for analyzed API traffic</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table" id="ai-table">
+            <thead>
+              <tr>
+                <th>ENDPOINT</th>
+                <th>MODEL</th>
+                <th>RISK SCORE</th>
+                <th>THREAT TYPE</th>
+                <th>EXPLANATION</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <section class="page" id="page-settings">
+    <div class="settings-grid">
+  
+  <div class="panel settings-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">Global Thresholds</h3>
+      <p class="panel-sub">Fine-tune alert sensitivity</p>
+    </div>
+    <div class="toggle-list">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Risk Alert Threshold</strong>
+          <p>Currently set to 70. Only score above this trigger alerts.</p>
+        </div>
+        <input type="number" class="filter-select" style="width: 80px;" value="70" id="threshold-input">
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Shadow API Boost</strong>
+          <p>Auto-assign risk score to undocumented paths.</p>
+        </div>
+        <input type="number" class="filter-select" style="width: 80px;" value="80">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel settings-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">System Health</h3>
+      <p class="panel-sub">Monitor internal AASDS services</p>
+    </div>
+    <div class="toggle-list">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Backend (Port 8000)</strong>
+          <p>FastAPI Core Engine Status</p>
+        </div>
+        <span class="status-pill status-success">Operational</span>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Database (SQLAlchemy)</strong>
+          <p>Logs, Alerts, and Revocation keys</p>
+        </div>
+        <span class="status-pill status-success">Healthy</span>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Target App</strong>
+          <p>Monitoring active on localhost</p>
+        </div>
+        <span class="status-pill status-success">Intercepting</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel settings-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">AI Provider</h3>
+    </div>
+    <div class="toggle-list">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Select AI Engine</strong>
+          <p>Choose which model analyzes API traffic</p>
+        </div>
+        <select class="filter-select" id="ai-provider" onchange="updateAIProvider()">
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic (Claude)</option>
+          <option value="gemini">Google Gemini</option>
+        </select>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong id="api-key-label">API Key</strong>
+          <input type="password" id="api-key-input" placeholder="Enter API key..." />
+        </div>
+      </div>
+    </div>
+    <button class="btn-save" onclick="saveSingleKey()">Save Configuration</button>
+  </div>
+
+  <div class="panel settings-panel" style="border-color: rgba(248, 113, 113, 0.3);">
+    <div class="panel-header">
+      <h3 class="panel-title" style="color: var(--risk-high);">Danger Zone</h3>
+    </div>
+    <div class="toggle-list">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Clear Traffic Logs</strong>
+          <p>Permanently delete all intercepted API history</p>
+        </div>
+        <button class="btn-revoke" onclick="wipeFrontendState()">Wipe UI State</button>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <strong>Reset API Inventory</strong>
+          <p>Remove all discovered endpoints from DB</p>
+        </div>
+        <button class="btn-revoke" onclick="confirm('Reset inventory?')">Reset DB</button>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+  </main>
+</div>
+
+<!-- API DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="modal-endpoint"></h2>
+        <p class="modal-sub" id="modal-type"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">METHODS</span>
+          <span class="meta-value" id="modal-methods"></span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">RISK LEVEL</span>
+          <span class="meta-value" id="modal-risk"></span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">LAST SEEN</span>
+          <span class="meta-value" id="modal-last-seen"></span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">TOTAL REQUESTS</span>
+          <span class="meta-value" id="modal-requests"></span>
+        </div>
+      </div>
+      <div class="modal-chart-section">
+        <h4>Traffic (Last 7 Days)</h4>
+        <div class="chart-container chart-container--modal">
+          <canvas id="modalChart"></canvas>
+        </div>
+      </div>
+      <div class="modal-findings" id="modal-findings"></div>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="script.js"></script>
+</body>
+</html>
